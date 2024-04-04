@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: UKIM Auth Checker
   description: |-
-    This API allows invited users to validate if the holders of EORI Numbers have a UKIM authorisation.
+    This API allows invited users, i.e Fast Parcel Operators (FPOs)to validate if holders of EORI Numbers have a UKIM authorisation.
     
     Some useful links:
     - [Github]()

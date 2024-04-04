@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: UKIM Auth Checker
+  description: |-
+    This API allows invited users to validate if the holders of EORI Numbers have a UKIM authorisation.
+    
+    Some useful links:
+    - [Github]()
+    - [Source API definition]()
+  version: 0.0.1
+servers:
+  - url: https://test-api.service.hmrc.gov.uk/customs/traders/internal-market-authorizations
+    description: Test Environment
+  - url: https://api.service.hmrc.gov.uk/customs/traders/internal-market-authorizations/
+    description: Live Environment
+tags:
+  - name: status-summary
+    description: UKIM Auth Status about EORI holders
+paths:
+  /status-summary:
+    get:
+      tags:
+        - status-summary
+      summary: Request Authorisation Status for EORIs
+      description: Request the UKIM Authorization Status of 1-3000 EORIs
+      operationId: requestAuth
+      parameters:
+       - name: eoriList
+         in: query
+         description: Comma-seperated list of EORI Numbers
+         example: GB777777777777, XI123456789123
+         required: true
+         explode: false
+         schema:
+          type: array
+          items: 
+            type: string
+       - name: validityDate
+         in: query
+         description: Date used to determine validity. If empty date of submission is used
+         example: 31-02-2024
+         required: false
+         explode: true
+         schema:
+          type: string
+      responses:
+        '200':
+          description: List of EORI Numbers provided with their authorised status as a boolean
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusSummary'          
+        '400':
+          description: Validation failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+        '403':
+          description: Forbidden
+        '429':
+          description: Request in excess of rate lime
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    StatusSummary:
+      type: array
+      items:
+        type: object
+        properties:
+          eori:
+            type: string
+            example: GB123123123123
+          authorised:
+            type: boolean
+            example: true
+    ValidationResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          validationError:
+            type: string
+            example: NL is not a supported country code
